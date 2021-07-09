@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Quotes terminal</string>
+    <string name="error_service_access_error">Service access error</string>
+    <string name="error_default">Some error occurred</string>
+</resources>

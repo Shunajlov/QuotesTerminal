@@ -1,0 +1,80 @@
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-android-extensions'
+}
+
+def apiPropertiesFile = rootProject.file("api.properties")
+def apiProperties = new Properties()
+apiProperties.load(new FileInputStream(apiPropertiesFile))
+
+android {
+    compileSdkVersion versions.android.targetSDK
+
+    defaultConfig {
+        applicationId "com.ihavenodomain.quotesterminal"
+        minSdkVersion versions.android.minSDK
+        targetSdkVersion versions.android.targetSDK
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    def apiEndpoint = apiProperties.apiEndpoint ?: 'Define apiEndpoint URL in api.properties'
+    def socketEndpoint = apiProperties.socketEndpoint ?: 'Define socketEndpoint URL in api.properties'
+
+    android.buildTypes.each { type ->
+        type.buildConfigField 'String', 'apiEndpoint', apiEndpoint
+        type.buildConfigField 'String', 'socketEndpoint', socketEndpoint
+    }
+}
+
+dependencies {
+
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+    //AndroidX
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+    implementation "androidx.appcompat:appcompat:$versions.lib.appcompat"
+    implementation "androidx.core:core-ktx:$versions.lib.core_ktx"
+    implementation "androidx.recyclerview:recyclerview:$versions.lib.recycler_view"
+    implementation "androidx.constraintlayout:constraintlayout:$versions.lib.constraintlayout"
+    // Lifecycle
+    implementation "androidx.lifecycle:lifecycle-extensions:$versions.lib.lifecycle_extensions"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$versions.lib.lifecycle"
+    // Network
+    implementation "com.squareup.retrofit2:retrofit:$versions.lib.retrofit"
+    implementation "com.squareup.retrofit2:adapter-rxjava3:$versions.lib.retrofit"
+    implementation "com.squareup.retrofit2:converter-gson:$versions.lib.retrofit"
+    implementation "com.google.code.gson:gson:$versions.lib.gson"
+    // DI
+    api "io.insert-koin:koin-core:$versions.lib.koin"
+    api "io.insert-koin:koin-core-ext:$versions.lib.koin"
+    api "io.insert-koin:koin-android:$versions.lib.koin"
+    api "io.insert-koin:koin-androidx-scope:$versions.lib.koin"
+    api "io.insert-koin:koin-androidx-viewmodel:$versions.lib.koin"
+    // Timber
+    implementation "com.jakewharton.timber:timber:$versions.lib.timber"
+    // Reactive Extensions
+    implementation "io.reactivex.rxjava3:rxandroid:$versions.lib.rxandroid"
+    // Tests
+    testImplementation "junit:junit:$versions.lib.junit"
+    androidTestImplementation "androidx.test.ext:junit:$versions.lib.androidx_junit"
+}
